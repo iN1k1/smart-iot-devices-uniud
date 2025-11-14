@@ -28,3 +28,11 @@ EOL
 
 # Set appropriate permissions
 chmod 644 "$CONFIG_FILE"
+
+echo "Configuration file created: $(pwd)/$CONFIG_FILE"
+
+# Execute mosquitto using docker
+docker run -it -d -p 1883:1883 -p 9001:9001 --name=mosquitto -v ./mosquitto.conf:/mosquitto/config/mosquitto.conf eclipse-mosquitto 
+
+# Install paho mqtt
+pip install paho-mqtt

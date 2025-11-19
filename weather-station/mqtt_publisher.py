@@ -58,3 +58,5 @@ if __name__ == '__main__':
         print("\nPublisher loop stopped. Disconnecting...")
         publisher_client.loop_stop()
         publisher_client.disconnect()
+
+

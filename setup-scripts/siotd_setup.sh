@@ -12,7 +12,7 @@ echo -e "${BLUE}🚀 Starting SIoTD Project Environment Setup...${NC}"
 # Define variables
 PROJECT_DIR="$HOME/Desktop/SIoTD-Projects"
 VENV_DIR="$PROJECT_DIR/siotdenv"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Function to check if a command exists
 command_exists() {

@@ -1,14 +1,11 @@
-# Import the Paho MQTT client library
 import paho.mqtt.client as mqtt
 
-# --- Callback Function ---
 # This function is called when the client successfully connects to the broker
 def on_connect(client, userdata, flags, rc):
     # 'rc' is the result code, indicating success (rc=0) or failure
     print("Connected with result code " + str(rc))
 
 # --- Publishing Function ---
-# Publishes a message on a given topic through MQTT
 def publish_message(topic, message):
     
     # 1. Create a new MQTT Client instance

@@ -11,7 +11,7 @@ INFLUXDB_PORT = 8086
 # --- Database Class ---
 class DB(object):
     # Constructor: Initializes the connection to InfluxDB
-    def __init__(self, self):
+    def __init__(self):
         super(DB, self).__init__()
         # Creates an InfluxDB client object using the configuration
         self.influxdb_client = InfluxDBClient(host=INFLUXDB_ADDRESS, port=INFLUXDB_PORT,

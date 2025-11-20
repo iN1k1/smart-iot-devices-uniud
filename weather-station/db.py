@@ -37,3 +37,14 @@ class DB(object):
         
         # Writes the prepared data to the database
         self.influxdb_client.write_points(json_body)
+
+    def close(self):
+        self.influxdb_client.close()
+
+    def __del__(self):
+        self.close()
+
+if __name__ == '__main__':
+    db = DB()
+    db.write_sensor_data('living_room', 'temperature', 25.5)
+    db.close()

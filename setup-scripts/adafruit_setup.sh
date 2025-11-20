@@ -28,14 +28,6 @@ if [ -n "$VIRTUAL_ENV" ] && [ -d "$VIRTUAL_ENV/bin" ]; then
     export PATH="$VIRTUAL_ENV/bin:$PATH"
 fi
 
-# Verify virtual environment
-print_section "Verifying virtual environment"
-if [ -z "$VIRTUAL_ENV" ] || [ ! -d "$VIRTUAL_ENV" ]; then
-    printf "%b\n" "${RED}❌ Virtual environment not found at $VENV_DIR${NC}" >&2
-    printf "%b\n" "${YELLOW}Please run setup-scripts/env_setup.sh first${NC}" >&2
-    exit 1
-fi
-
 printf "%b\n" "${BLUE}🚀 Starting SIoTD Adafruit (DHT) Setup...${NC}"
 
 # Get script directory
@@ -65,6 +57,14 @@ print_status() {
         return 1
     fi
 }
+
+# Verify virtual environment
+print_section "Verifying virtual environment"
+if [ -z "$VIRTUAL_ENV" ] || [ ! -d "$VIRTUAL_ENV" ]; then
+    printf "%b\n" "${RED}❌ Virtual environment not found at $VENV_DIR${NC}" >&2
+    printf "%b\n" "${YELLOW}Please run setup-scripts/env_setup.sh first${NC}" >&2
+    exit 1
+fi
 
 # Verify virtual environment
 print_section "Verifying virtual environment"

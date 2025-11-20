@@ -11,7 +11,7 @@ printf "%b" "${BLUE}🚀 Starting SIoTD Project Environment Setup...${NC}\n"
 
 # Define variables
 PROJECT_DIR="$HOME/Desktop/SIoTD-Projects"
-VENV_DIR="$PROJECT_DIR/siotdenv"
+VENV_DIR="$HOME/siotdenv"  # Changed to home directory
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Function to check if a command exists
@@ -70,7 +70,7 @@ MOSQUITTO_LOG="\$MOSQUITTO_DIR/log"
 INFLUXDB_DIR="\$PROJECT_DIR/influxdb"
 
 # Python Virtual Environment
-VIRTUAL_ENV="\$VENV_DIR"
+VIRTUAL_ENV="$VENV_DIR"  # Removed escaping to use the actual path
 
 # Colors for output
 GREEN='\\033[0;32m'

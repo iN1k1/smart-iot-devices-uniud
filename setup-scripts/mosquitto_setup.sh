@@ -106,6 +106,7 @@ docker run -it -d \
     -v "$MOSQUITTO_CONFIG":/mosquitto/config/mosquitto.conf \
     -v "$MOSQUITTO_DATA":/mosquitto/data \
     -v "$MOSQUITTO_LOG":/mosquitto/log \
+    --network="host" \
     eclipse-mosquitto
 
 # Check if container started successfully

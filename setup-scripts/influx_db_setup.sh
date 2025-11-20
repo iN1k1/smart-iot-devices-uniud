@@ -74,6 +74,7 @@ docker run -d -p 8086:8086 \
   -e INFLUXDB_USER_PASSWORD=userpass \
   --name=influxdb \
   -v influxdb:/var/lib/influxdb \
+  --network="host" \
   influxdb:1.8
 
 # Check if container started successfully

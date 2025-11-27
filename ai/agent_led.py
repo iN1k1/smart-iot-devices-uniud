@@ -340,14 +340,14 @@ if __name__ == "__main__":
         print("\nTroubleshooting:")
         print("1. Make sure you have installed the required packages:")
         print("   pip install smolagents python-dotenv gpiozero")
-        print("2. Check your .env file")
+        print("2. Make sure you have a valid HuggingFace token")
+        print("3. Check your .env file")
         print("   It should contain these variables:")
         print("   HUGGINGFACE_TOKEN=your_token_here")
         print("   HUGGINGFACE_MODEL=meta-llama/Meta-Llama-3-8B-Instruct")
         print("   TEMPERATURE=0.7")
         print("   MAX_TOKENS=2048")
         print("   LED_PIN=17")
-        print("3. Make sure you have a valid HuggingFace token")
         print("4. Check your internet connection for API access")
     finally:
         # Cleanup GPIO resources

@@ -55,12 +55,7 @@ A comprehensive IoT platform featuring AI-powered object detection, voice assist
    TELEGRAM_BOT_TOKEN=your_telegram_token
    ```
 
-4. **Install Python dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. **Start OLLAMA (for local models)**
+4. **Start OLLAMA (for local models)**
    ```bash
    docker run -d -p 11434:11434 --name ollama ollama/ollama
    docker exec ollama ollama pull qwen:0.6b  # Example model

@@ -11,7 +11,7 @@ INFLUXDB_PORT = 8086
 # --- Database Class ---
 class DB(object):
     # Constructor: Initializes the connection to InfluxDB
-    def __init__(self, self):
+    def __init__(self):
         super(DB, self).__init__()
         # Creates an InfluxDB client object using the configuration
         self.influxdb_client = InfluxDBClient(host=INFLUXDB_ADDRESS, port=INFLUXDB_PORT,
@@ -37,3 +37,14 @@ class DB(object):
         
         # Writes the prepared data to the database
         self.influxdb_client.write_points(json_body)
+
+    def close(self):
+        self.influxdb_client.close()
+
+    def __del__(self):
+        self.close()
+
+if __name__ == '__main__':
+    db = DB()
+    db.write_sensor_data('living_room', 'temperature', 25.5)
+    db.close()

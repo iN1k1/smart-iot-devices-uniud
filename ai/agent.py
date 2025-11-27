@@ -14,7 +14,7 @@ import time
 from dataclasses import dataclass
 from dotenv import load_dotenv
 
-from smolagents import CodeAgent, tool, InferenceClientModel
+from smolagents import CodeAgent, tool, InferenceClientModel, LiteLLMModel
 from gpiozero import LED
 
 # Load environment variables from .env file
@@ -37,7 +37,10 @@ if not HUGGINGFACE_TOKEN or HUGGINGFACE_TOKEN == 'your_huggingface_token_here':
     print("3. Get a token from: https://huggingface.co/settings/tokens")
     print("\nExample .env file:")
     print("HUGGINGFACE_TOKEN=your_actual_token_here")
+    print("HF HOSTED ENDPOINT:")
     print("HUGGINGFACE_MODEL=meta-llama/Meta-Llama-3-8B-Instruct")
+    print("LOCAL ENDPOINT:")
+    print("HUGGINGFACE_MODEL=ollama_chat/qwen3:0.6b")
     print("TEMPERATURE=0.7")
     print("MAX_TOKENS=2048")
     exit(1)
@@ -249,8 +252,16 @@ def create_sensor_agent(model_id: str = None, token: str = None):
         get_led_status
     ]
 
-    # Initialize the model
+    # Initialize the model (serverless HF hosted endpoint)
     model = InferenceClientModel(model_id=model_id, token=token)
+
+    # Use local model with OLLAMA
+    if "ollama_chat" in model_id:
+        model = LiteLLMModel(
+            model_id=model_id,
+            api_base="http://localhost:11434",
+            num_ctx=8192,
+        )
 
     # Create agent with tools
     agent = CodeAgent(

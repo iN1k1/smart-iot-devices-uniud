@@ -224,6 +224,27 @@ EOL
     chmod 644 "$CONFIG_FILE"
     print_status "Created environment configuration at $CONFIG_FILE" "Failed to create environment configuration"
 
+    print_section "Environment Variables"
+    (
+        . "$CONFIG_FILE" || exit 1
+        printf '   - %s: %s\n' \
+            "PROJECT_DIR" "$PROJECT_DIR" \
+            "VENV_DIR" "$VENV_DIR" \
+            "SCRIPT_DIR" "$SCRIPT_DIR" \
+            "ROOT_DIR" "$ROOT_DIR" \
+            "CONFIG_FILE" "$CONFIG_FILE" \
+            "MOSQUITTO_DIR" "$MOSQUITTO_DIR" \
+            "MOSQUITTO_CONFIG" "$MOSQUITTO_CONFIG" \
+            "MOSQUITTO_DATA" "$MOSQUITTO_DATA" \
+            "MOSQUITTO_LOG" "$MOSQUITTO_LOG" \
+            "INFLUXDB_DIR" "$INFLUXDB_DIR" \
+            "Configured VIRTUAL_ENV" "$VIRTUAL_ENV" \
+            "HUGGINGFACE_MODEL" "$HUGGINGFACE_MODEL"
+    ) || {
+        printf "%b\n" "${RED}❌ Failed to read configuration from $CONFIG_FILE${NC}" >&2
+        exit 1
+    }
+
     # Install required system packages
     print_section "Installing System Dependencies"
     if ! command_exists python3-venv; then

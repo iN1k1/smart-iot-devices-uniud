@@ -166,7 +166,7 @@ setup_environment() {
     PROJECT_DIR="$HOME/Desktop/SIoTD-Projects"
     VENV_DIR="$HOME/siotdenv"
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-    ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+    ROOT_DIR="$PROJECT_DIR"
     CONFIG_FILE="$ROOT_DIR/siotd.conf"
 
     # Create project directory and subdirectories

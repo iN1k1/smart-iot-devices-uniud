@@ -15,12 +15,16 @@ from telegram.ext import (
 )
 
 # --- Configuration ---
-load_dotenv()
+# Settings live in siotd.conf, created by setup.sh. Set SIOTD_CONF to use another file.
+CONFIG_FILE = os.environ.get(
+    "SIOTD_CONF", os.path.expanduser("~/Desktop/SIoTD-Projects/siotd.conf")
+)
+load_dotenv(CONFIG_FILE)
 
 # Bot configuration
 TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 if not TOKEN:
-    raise ValueError("TELEGRAM_BOT_TOKEN environment variable not set")
+    raise ValueError(f"TELEGRAM_BOT_TOKEN not set (expected in {CONFIG_FILE})")
 
 # Logging setup
 logging.basicConfig(

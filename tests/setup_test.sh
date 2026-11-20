@@ -56,7 +56,7 @@ test_environment_packages() (
         exit 1
     fi
     local expected
-    expected="$(printf 'install --upgrade pip\ninstall setuptools wheel')"
+    expected="$(printf 'install --upgrade pip\ninstall setuptools wheel boto3')"
     if [ "$(cat "$pip_log")" != "$expected" ]; then
         printf 'Unexpected pip commands for recreate=%s:\n' "$recreate" >&2
         cat "$pip_log" >&2
@@ -64,6 +64,28 @@ test_environment_packages() (
     fi
 )
 
+test_aiagents_packages() (
+    local temp_dir
+    temp_dir="$(mktemp -d)"
+    trap 'rm -rf -- "$temp_dir"' EXIT
+    export HOME="$temp_dir" PROJECT_DIR="$temp_dir/project" VIRTUAL_ENV="$temp_dir"
+    local pip_log="$temp_dir/pip.log"
+    command_exists() { return 0; }
+    sudo() { printf 'sudo %s\n' "$*" >> "$pip_log"; }
+    uname() { [ "$1" = "-s" ] && echo Linux || echo aarch64; }
+    pip() { printf '%s\n' "$*" >> "$pip_log"; }
+
+    setup_aiagents >/dev/null
+    local expected
+    expected="$(printf 'install smolagents[litellm] python-dotenv\nsudo apt-get install -y libgl1\ninstall ultralytics opencv-python ncnn')"
+    if [ "$(cat "$pip_log")" != "$expected" ]; then
+        printf 'Unexpected install commands for setup_aiagents:\n' >&2
+        cat "$pip_log" >&2
+        exit 1
+    fi
+)
+
+test_aiagents_packages
 test_environment_packages false
 test_environment_packages true
 printf 'Setup tests passed\n'

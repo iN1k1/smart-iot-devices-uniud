@@ -59,11 +59,13 @@ main() {
     local setup_telegram=false
     local setup_aiagents=false
     local setup_all=false
+    local recreate_venv=false
 
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
             --env-setup) setup_env=true ;;
+            --recreate-venv) recreate_venv=true; setup_env=true ;;
             --mosquitto) setup_mosquitto=true ;;
             --influxdb) setup_influxdb=true ;;
             --grafana) setup_grafana=true ;;
@@ -99,7 +101,7 @@ main() {
 
     # Environment setup
     if [ "$setup_env" = true ]; then
-        setup_environment
+        setup_environment "$recreate_venv"
     fi
 
     # Mosquitto setup
@@ -142,6 +144,7 @@ Usage: $0 [OPTIONS]
 
 Options:
   --env-setup    Set up the project environment
+  --recreate-venv Re-create the virtual environment and reinstall its Python packages
   --mosquitto    Set up Mosquitto MQTT broker
   --influxdb     Set up InfluxDB
   --grafana      Set up Grafana
@@ -153,6 +156,7 @@ Options:
 
 Example:
   $0 --env-setup --mosquitto --influxdb
+  $0 --recreate-venv
   $0 --all
 
 EOF
@@ -161,6 +165,7 @@ EOF
 # Environment setup
 setup_environment() {
     print_section "Setting Up Project Environment"
+    local recreate_venv="${1:-false}"
     
     # Define variables
     PROJECT_DIR="$HOME/Desktop/SIoTD-Projects"
@@ -258,6 +263,19 @@ EOL
 
     # Create virtual environment
     print_section "Setting Up Python Virtual Environment"
+    if [ "$recreate_venv" = true ]; then
+        printf "%b\n" "${YELLOW}♻️  Re-creating virtual environment at $VENV_DIR${NC}"
+        if [ "${VIRTUAL_ENV:-}" = "$VENV_DIR" ] && declare -F deactivate >/dev/null; then
+            deactivate
+        fi
+        if [ -e "$VENV_DIR" ] || [ -L "$VENV_DIR" ]; then
+            if ! rm -rf -- "$VENV_DIR"; then
+                printf "%b\n" "${RED}❌ Failed to remove existing virtual environment at $VENV_DIR${NC}" >&2
+                exit 1
+            fi
+        fi
+    fi
+
     if [ -d "$VENV_DIR" ]; then
         printf "%b\n" "${YELLOW}ℹ️  Virtual environment already exists at $VENV_DIR${NC}"
     else
@@ -288,9 +306,25 @@ EOL
             
             # Install Python packages
             print_section "Installing Python Packages"
-            pip install --upgrade pip
-            pip install setuptools wheel
-            print_status "Updated pip and installed setuptools and wheel" "Failed to install Python packages"
+            if ! pip install --upgrade pip || ! pip install setuptools wheel; then
+                printf "%b\n" "${RED}❌ Failed to install Python packages${NC}" >&2
+                exit 1
+            fi
+            if [ "$recreate_venv" = true ]; then
+                if ! pip install \
+                    paho-mqtt \
+                    influxdb \
+                    adafruit-python-shell \
+                    adafruit-blinka \
+                    adafruit-circuitpython-dht \
+                    python-telegram-bot \
+                    python-dotenv \
+                    smolagents; then
+                    printf "%b\n" "${RED}❌ Failed to reinstall project Python packages${NC}" >&2
+                    exit 1
+                fi
+            fi
+            print_status "Updated pip and installed Python packages" "Failed to install Python packages"
             
             # Install Docker if not installed
             if ! command_exists docker; then

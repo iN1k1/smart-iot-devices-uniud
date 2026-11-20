@@ -524,39 +524,12 @@ setup_grafana() {
 setup_adafruit() {
     print_section "Setting Up Adafruit Dependencies"
     check_virtualenv
-    
-    # Install Adafruit Blinka
-    printf "%b\n" "${BLUE}Installing Adafruit Blinka...${NC}"
-    if python3 -c "import board" 2>/dev/null; then
-        printf "%b\n" "${YELLOW}ℹ️  Adafruit Blinka is already installed${NC}"
-    else
-        pip install --upgrade adafruit-python-shell
-        wget -q https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/raspi-blinka.py
-        
-        if [ -f "raspi-blinka.py" ]; then
-            printf "%b\n" "${BLUE}Running Adafruit Blinka installer...${NC}"
-            printf "%b\n" "${YELLOW}⚠️  This may require sudo privileges and a system reboot${NC}"
-            sudo -E env PATH="$PATH" python3 raspi-blinka.py
-            
-            if [ $? -eq 0 ]; then
-                printf "%b\n" "${GREEN}✅ Adafruit Blinka installed successfully!${NC}"
-                printf "\n%b\n" "${YELLOW}⚠️  Please reboot your system and run this script again to complete the setup.${NC}"
-                exit 0
-            else
-                printf "%b\n" "${YELLOW}⚠️  Adafruit Blinka installation may require a system reboot.${NC}" >&2
-            fi
-        else
-            printf "%b\n" "${YELLOW}⚠️  Failed to download Adafruit Blinka installer${NC}" >&2
-        fi
-    fi
-    
-    # Install DHT sensor library
+
     printf "%b\n" "${BLUE}Installing DHT sensor library...${NC}"
-    if python -c "import adafruit_dht" 2>/dev/null; then
+    if python3 -c "import adafruit_dht" 2>/dev/null; then
         printf "%b\n" "${YELLOW}ℹ️  DHT sensor library is already installed${NC}"
     else
         if pip install adafruit-circuitpython-dht; then
-            # Verify the installation by importing the module
             if python3 -c "import adafruit_dht" 2>/dev/null; then
                 printf "%b\n" "${GREEN}✅ DHT sensor library installed and verified${NC}"
             else

@@ -61,6 +61,10 @@ main() {
     local setup_all=false
     local recreate_venv=false
 
+    if [ "$#" -eq 1 ] && [ "$1" = "--recreate-venv" ]; then
+        setup_all=true
+    fi
+
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -144,7 +148,7 @@ Usage: $0 [OPTIONS]
 
 Options:
   --env-setup    Set up the project environment
-  --recreate-venv Re-create the virtual environment and reinstall its Python packages
+  --recreate-venv Re-create the virtual environment; alone, run all setup steps
   --mosquitto    Set up Mosquitto MQTT broker
   --influxdb     Set up InfluxDB
   --grafana      Set up Grafana
@@ -309,20 +313,6 @@ EOL
             if ! pip install --upgrade pip || ! pip install setuptools wheel; then
                 printf "%b\n" "${RED}❌ Failed to install Python packages${NC}" >&2
                 exit 1
-            fi
-            if [ "$recreate_venv" = true ]; then
-                if ! pip install \
-                    paho-mqtt \
-                    influxdb \
-                    adafruit-python-shell \
-                    adafruit-blinka \
-                    adafruit-circuitpython-dht \
-                    python-telegram-bot \
-                    python-dotenv \
-                    smolagents; then
-                    printf "%b\n" "${RED}❌ Failed to reinstall project Python packages${NC}" >&2
-                    exit 1
-                fi
             fi
             print_status "Updated pip and installed Python packages" "Failed to install Python packages"
             

@@ -36,9 +36,13 @@ A comprehensive IoT platform featuring AI-powered object detection, voice assist
    chmod +x setup.sh
    ./setup.sh
    ```
-   To recreate the virtual environment and reinstall all Python packages configured by the setup script, run:
+   To recreate the virtual environment and rerun all setup steps, run:
    ```bash
    ./setup.sh --recreate-venv
+   ```
+   To recreate it and run only selected steps, combine the flag with those steps, for example:
+   ```bash
+   ./setup.sh --recreate-venv --telegram
    ```
 
 3. **Set up environment variables**

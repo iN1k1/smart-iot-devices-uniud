@@ -66,7 +66,7 @@ main() {
     fi
 
     # Parse command line arguments
-    while [[ $# -gt 0 ]]; do
+    while [ "$#" -gt 0 ]; do
         case "$1" in
             --env-setup) setup_env=true ;;
             --recreate-venv) recreate_venv=true; setup_env=true ;;
@@ -175,8 +175,6 @@ setup_environment() {
     PROJECT_DIR="$HOME/Desktop/SIoTD-Projects"
     VENV_DIR="$HOME/siotdenv"
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-    ROOT_DIR="$PROJECT_DIR"
-    CONFIG_FILE="$ROOT_DIR/siotd.conf"
 
     # Create project directory and subdirectories
     for dir in "$PROJECT_DIR" \
@@ -240,7 +238,6 @@ EOL
             "PROJECT_DIR" "$PROJECT_DIR" \
             "VENV_DIR" "$VENV_DIR" \
             "SCRIPT_DIR" "$SCRIPT_DIR" \
-            "ROOT_DIR" "$ROOT_DIR" \
             "CONFIG_FILE" "$CONFIG_FILE" \
             "MOSQUITTO_DIR" "$MOSQUITTO_DIR" \
             "MOSQUITTO_CONFIG" "$MOSQUITTO_CONFIG" \
@@ -359,8 +356,8 @@ setup_mosquitto() {
     check_docker
     
     # Load configuration
-    . "$ROOT_DIR/siotd.conf" 2>/dev/null || {
-        printf "%b\n" "${RED}❌ Error: Failed to load configuration from $ROOT_DIR/siotd.conf${NC}" >&2
+    . "$PROJECT_DIR/siotd.conf" 2>/dev/null || {
+        printf "%b\n" "${RED}❌ Error: Failed to load configuration from $PROJECT_DIR/siotd.conf${NC}" >&2
         exit 1
     }
     

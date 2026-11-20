@@ -81,7 +81,7 @@ test_aiagents_packages() (
 
     setup_aiagents >/dev/null
     local expected
-    expected="$(printf 'install smolagents[litellm] python-dotenv\nsudo apt-get install -y libgl1\ninstall ultralytics opencv-python ncnn\nsudo apt-get install -y curl zstd\nsh install-script\nollama list\nollama pull qwen3:0.6b')"
+    expected="$(printf 'install smolagents[litellm] python-dotenv\nsudo apt-get install -y libgl1\ninstall torch>=2.12,<2.15 torchvision --index-url https://download.pytorch.org/whl/cpu\ninstall ultralytics opencv-python ncnn\nsudo apt-get install -y curl zstd\nsh install-script\nollama list\nollama pull qwen3:0.6b')"
     if [ "$(cat "$pip_log")" != "$expected" ]; then
         printf 'Unexpected install commands for setup_aiagents:\n' >&2
         cat "$pip_log" >&2

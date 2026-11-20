@@ -42,7 +42,7 @@ With no options, `setup.sh` runs every step. To run only some, pass their flags:
 | `--grafana` | Starts Grafana in Docker |
 | `--adafruit` | Installs the DHT sensor library (`adafruit-circuitpython-dht`) |
 | `--telegram` | Installs `python-telegram-bot` and checks the bot token in `siotd.conf` |
-| `--ai` | Installs `smolagents[litellm]`, `ultralytics` (with PyTorch), `opencv-python` and `ncnn`; installs Ollama and pulls the `qwen3:0.6b` model; creates `~/Desktop/SIoTD-Projects/ai/.env` |
+| `--ai` | Installs `smolagents[litellm]`, CPU-only PyTorch, `ultralytics`, `opencv-python` and `ncnn`; installs Ollama and pulls the `qwen3:0.6b` model; creates `~/Desktop/SIoTD-Projects/ai/.env` |
 | `--all` | Runs every step |
 
 Run `--env-setup` once before using the other flags on their own, because they install into

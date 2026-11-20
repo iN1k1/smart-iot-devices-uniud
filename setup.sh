@@ -524,7 +524,23 @@ setup_grafana() {
 setup_adafruit() {
     print_section "Setting Up Adafruit Dependencies"
     check_virtualenv
-    pip install adafruit-circuitpython-dht
+
+    printf "%b\n" "${BLUE}Installing DHT sensor library...${NC}"
+    if python3 -c "import adafruit_dht" 2>/dev/null; then
+        printf "%b\n" "${YELLOW}ℹ️  DHT sensor library is already installed${NC}"
+    else
+        if pip install adafruit-circuitpython-dht; then
+            if python3 -c "import adafruit_dht" 2>/dev/null; then
+                printf "%b\n" "${GREEN}✅ DHT sensor library installed and verified${NC}"
+            else
+                printf "%b\n" "${YELLOW}⚠️  DHT sensor library installed but verification failed${NC}" >&2
+                printf "%b\n" "${YELLOW}   Try running the script again or check the installation manually.${NC}" >&2
+            fi
+        else
+            printf "%b\n" "${RED}❌ Failed to install DHT sensor library${NC}" >&2
+            exit 1
+        fi
+    fi
 }
 
 # Telegram bot setup

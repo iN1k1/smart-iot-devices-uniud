@@ -58,10 +58,9 @@ A comprehensive IoT platform featuring AI-powered object detection, voice assist
    # MQTT Configuration
    MQTT_BROKER=localhost
    MQTT_PORT=1883
-   
-   # Telegram Bot
-   TELEGRAM_BOT_TOKEN=your_telegram_token
    ```
+   The Telegram bot token is not set here: `setup.sh` writes `TELEGRAM_BOT_TOKEN` into
+   `~/Desktop/SIoTD-Projects/siotd.conf`, and the bot reads it from there.
 
 4. **Start OLLAMA (for local models)**
    ```bash

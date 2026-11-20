@@ -225,6 +225,9 @@ export NC='\\033[0m' # No Color
 # AI Configuration
 export HUGGINGFACE_MODEL="Qwen/Qwen3-4B-Instruct-2507"
 export HUGGINGFACE_TOKEN=""  # Add your HuggingFace token here
+
+# Telegram Bot Configuration
+export TELEGRAM_BOT_TOKEN="1234567890:ABCdefGHIjklMnoPQRstUVwxyz-ABCDEFGHI"
 EOL
 
     # Make the configuration file readable by all
@@ -554,30 +557,18 @@ setup_telegram_bot() {
         exit 1
     fi
     
-    # Ensure chatbot directory exists
-    local chatbot_dir="$(cd "$(dirname "$0")/.." && pwd)/chatbot"
-    mkdir -p "$chatbot_dir"
-    print_status "Ensured chatbot directory exists at $chatbot_dir" "Failed to create chatbot directory"
-    
-    # Create .env file if it doesn't exist
-    TELEGRAM_BOT_ENV="$chatbot_dir/.env"
-    if [ ! -f "$TELEGRAM_BOT_ENV" ]; then
-        print_section "Creating .env file"
-        cat > "$TELEGRAM_BOT_ENV" << 'EOL'
-# Telegram Bot Configuration
-TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
-
-# Authentication (add Telegram user IDs separated by commas)
-# AUTHORIZED_USERS=123456789,987654321
-EOL
-        print_status "Created .env file at $TELEGRAM_BOT_ENV" "Failed to create .env file"
-        printf "%b\n" "${YELLOW}⚠️  Please update the TELEGRAM_BOT_TOKEN in $TELEGRAM_BOT_ENV${NC}"
+    # The bot token is stored in siotd.conf (created by --env-setup)
+    local config_file="$HOME/Desktop/SIoTD-Projects/siotd.conf"
+    if grep -q '^export TELEGRAM_BOT_TOKEN=' "$config_file" 2>/dev/null; then
+        printf "%b\n" "${GREEN}✅ TELEGRAM_BOT_TOKEN found in $config_file${NC}"
+    else
+        printf "%b\n" "${YELLOW}⚠️  TELEGRAM_BOT_TOKEN not found in $config_file. Run ./setup.sh --env-setup first${NC}"
     fi
-    
+
     printf "\n%b\n" "${GREEN}✨ Telegram Bot setup completed successfully!${NC}"
     printf "%b\n" "To get started:"
     printf "%b\n" "1. Get a bot token from @BotFather on Telegram"
-    printf "%b\n" "2. Update the TELEGRAM_BOT_TOKEN in $TELEGRAM_BOT_ENV"
+    printf "%b\n" "2. Update the TELEGRAM_BOT_TOKEN in $config_file"
     printf "%b\n" "3. Run the bot with: python chatbot/telegrambot.py"
 }
 

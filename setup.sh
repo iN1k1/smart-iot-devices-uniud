@@ -66,7 +66,7 @@ main() {
     fi
 
     # Parse command line arguments
-    while [[ $# -gt 0 ]]; do
+    while [ "$#" -gt 0 ]; do
         case "$1" in
             --env-setup) setup_env=true ;;
             --recreate-venv) recreate_venv=true; setup_env=true ;;

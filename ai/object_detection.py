@@ -1,13 +1,13 @@
 from ultralytics import YOLO
 
-# Load a YOLOv11n PyTorch (lightweight) model
-model = YOLO("yolov11n.pt")
+# Load a YOLO11n PyTorch (lightweight) model
+model = YOLO("yolo11n.pt")
 
 # Export the model to NCNN format for better inference on our devices
-model.export(format="ncnn")  # creates 'yolov11n_ncnn_model'
+model.export(format="ncnn")  # creates 'yolo11n_ncnn_model'
 
 # Load the exported NCNN model
-ncnn_model = YOLO("yolov11n_ncnn_model", task="detect")
+ncnn_model = YOLO("yolo11n_ncnn_model", task="detect")
 
 # Run inference on an example to get the results
 results = ncnn_model("https://ultralytics.com/images/bus.jpg")

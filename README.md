@@ -62,11 +62,14 @@ A comprehensive IoT platform featuring AI-powered object detection, voice assist
    The Telegram bot token is not set here: `setup.sh` writes `TELEGRAM_BOT_TOKEN` into
    `~/Desktop/SIoTD-Projects/siotd.conf`, and the bot reads it from there.
 
-4. **Start OLLAMA (for local models)**
+4. **OLLAMA (for local models)**
+   `./setup.sh --ai` installs Ollama with the official installer (64-bit OS only), which
+   runs it as the `ollama` systemd service on `http://localhost:11434`, and pulls the
+   `qwen3:0.6b` model. To use another model, set `OLLAMA_MODEL` before running setup:
    ```bash
-   docker run -d -p 11434:11434 --name ollama ollama/ollama
-   docker exec ollama ollama pull qwen:0.6b  # Example model
+   OLLAMA_MODEL=qwen3:1.7b ./setup.sh --ai
    ```
+   Check the server with `systemctl status ollama` and the models with `ollama list`.
 
 ## 📁 Project Structure
 

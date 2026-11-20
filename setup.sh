@@ -310,7 +310,8 @@ EOL
             
             # Install Python packages
             print_section "Installing Python Packages"
-            if ! pip install --upgrade pip || ! pip install setuptools wheel; then
+            # boto3: AWS SDK used by assistant/bounded_alexa_controller.py
+            if ! pip install --upgrade pip || ! pip install setuptools wheel boto3; then
                 printf "%b\n" "${RED}❌ Failed to install Python packages${NC}" >&2
                 exit 1
             fi
@@ -581,8 +582,65 @@ setup_aiagents() {
     
     # Install required Python packages
     printf "%b\n" "${BLUE}Installing AI agent dependencies...${NC}"
-    pip install smolagents python-dotenv
+    # smolagents[litellm] is needed by LiteLLMModel (local Ollama models in ai/agent.py)
+    pip install "smolagents[litellm]" python-dotenv
     print_status $? "Installed AI agent dependencies"
+
+    # YOLO object detection (ai/object_detection.py), following the Ultralytics
+    # Raspberry Pi guide: https://docs.ultralytics.com/guides/raspberry-pi/
+    print_section "Installing YOLO and OpenCV"
+    if [ "$(uname -s)" = "Linux" ] && [ "$(uname -m)" != "aarch64" ]; then
+        printf "%b\n" "${YELLOW}⚠️  Ultralytics on Raspberry Pi needs the 64-bit Raspberry Pi OS (Bookworm). Detected: $(uname -m)${NC}" >&2
+    fi
+    # opencv-python needs libGL, which Raspberry Pi OS Lite doesn't ship
+    if command_exists apt-get; then
+        sudo apt-get install -y libgl1 || \
+            printf "%b\n" "${YELLOW}⚠️  Could not install libgl1; OpenCV may fail to import${NC}" >&2
+    fi
+    # ultralytics pulls in PyTorch; ncnn is the runtime for the exported NCNN model
+    if pip install ultralytics opencv-python ncnn; then
+        print_status "Installed ultralytics, opencv-python and ncnn" "Failed to install YOLO packages"
+    else
+        printf "%b\n" "${RED}❌ Failed to install YOLO packages (ultralytics, opencv-python, ncnn)${NC}" >&2
+        exit 1
+    fi
+
+    # Ollama: local LLM server used by ai/agent.py when HUGGINGFACE_MODEL=ollama_chat/<model>.
+    # Official installer (https://docs.ollama.com/linux): 64-bit only, needs curl and zstd,
+    # and sets up the 'ollama' systemd service on 127.0.0.1:11434.
+    print_section "Installing Ollama"
+    local ollama_model="${OLLAMA_MODEL:-qwen3:0.6b}"
+    if command_exists ollama; then
+        printf "%b\n" "${GREEN}✅ Ollama already installed ($(ollama -v 2>/dev/null))${NC}"
+    else
+        if command_exists apt-get; then
+            sudo apt-get install -y curl zstd || \
+                printf "%b\n" "${YELLOW}⚠️  Could not install curl/zstd; the Ollama installer may fail${NC}" >&2
+        fi
+        if (set -o pipefail; curl -fsSL https://ollama.com/install.sh | sh); then
+            print_status "Installed Ollama" "Failed to install Ollama"
+        else
+            printf "%b\n" "${RED}❌ Failed to install Ollama. See https://docs.ollama.com/linux${NC}" >&2
+            exit 1
+        fi
+    fi
+
+    # Wait for the Ollama server, then download the model
+    local tries=0
+    until ollama list >/dev/null 2>&1; do
+        tries=$((tries + 1))
+        if [ "$tries" -ge 30 ]; then
+            printf "%b\n" "${YELLOW}⚠️  Ollama server not responding. Start it with: sudo systemctl start ollama${NC}" >&2
+            break
+        fi
+        sleep 1
+    done
+    printf "%b\n" "${BLUE}Pulling Ollama model $ollama_model...${NC}"
+    if ollama pull "$ollama_model"; then
+        print_status "Pulled Ollama model $ollama_model" "Failed to pull Ollama model"
+    else
+        printf "%b\n" "${YELLOW}⚠️  Could not pull $ollama_model. Retry later with: ollama pull $ollama_model${NC}" >&2
+    fi
     
     # Create AI directory in the project folder
     local ai_dir="$PROJECT_DIR/ai"

@@ -70,14 +70,18 @@ test_aiagents_packages() (
     trap 'rm -rf -- "$temp_dir"' EXIT
     export HOME="$temp_dir" PROJECT_DIR="$temp_dir/project" VIRTUAL_ENV="$temp_dir"
     local pip_log="$temp_dir/pip.log"
-    command_exists() { return 0; }
+    command_exists() { [ "$1" != ollama ]; }
     sudo() { printf 'sudo %s\n' "$*" >> "$pip_log"; }
+    curl() { printf 'install-script'; }
+    sh() { printf 'sh %s\n' "$(cat)" >> "$pip_log"; }
+    ollama() { printf 'ollama %s\n' "$*" >> "$pip_log"; }
+    sleep() { :; }
     uname() { [ "$1" = "-s" ] && echo Linux || echo aarch64; }
     pip() { printf '%s\n' "$*" >> "$pip_log"; }
 
     setup_aiagents >/dev/null
     local expected
-    expected="$(printf 'install smolagents[litellm] python-dotenv\nsudo apt-get install -y libgl1\ninstall ultralytics opencv-python ncnn')"
+    expected="$(printf 'install smolagents[litellm] python-dotenv\nsudo apt-get install -y libgl1\ninstall ultralytics opencv-python ncnn\nsudo apt-get install -y curl zstd\nsh install-script\nollama list\nollama pull qwen3:0.6b')"
     if [ "$(cat "$pip_log")" != "$expected" ]; then
         printf 'Unexpected install commands for setup_aiagents:\n' >&2
         cat "$pip_log" >&2

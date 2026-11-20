@@ -597,7 +597,16 @@ setup_aiagents() {
         sudo apt-get install -y libgl1 || \
             printf "%b\n" "${YELLOW}⚠️  Could not install libgl1; OpenCV may fail to import${NC}" >&2
     fi
-    # ultralytics pulls in PyTorch; ncnn is the runtime for the exported NCNN model
+    # PyTorch's default PyPI build pulls in GBs of NVIDIA/CUDA libraries the Pi can't use.
+    # Install the CPU-only build first so ultralytics reuses it instead. The version range
+    # matches what ultralytics' own export extra requires on 64-bit ARM with Python 3.11.
+    if pip install "torch>=2.12,<2.15" torchvision --index-url https://download.pytorch.org/whl/cpu; then
+        print_status "Installed CPU-only PyTorch" "Failed to install CPU-only PyTorch"
+    else
+        printf "%b\n" "${RED}❌ Failed to install CPU-only PyTorch (torch, torchvision)${NC}" >&2
+        exit 1
+    fi
+    # ncnn is the runtime for the exported NCNN model
     if pip install ultralytics opencv-python ncnn; then
         print_status "Installed ultralytics, opencv-python and ncnn" "Failed to install YOLO packages"
     else

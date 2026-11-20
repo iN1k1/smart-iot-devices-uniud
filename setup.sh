@@ -178,7 +178,7 @@ setup_environment() {
 
     # Create project directory and subdirectories
     for dir in "$PROJECT_DIR" \
-               "$PROJECT_DIR/weather" \
+               "$PROJECT_DIR/weather-station" \
                "$PROJECT_DIR/assistant" \
                "$PROJECT_DIR/basics" \
                "$PROJECT_DIR/ai" \

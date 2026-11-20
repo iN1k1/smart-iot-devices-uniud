@@ -136,7 +136,7 @@ For the "Escape the Lab" exercise, see [chatbot/escape_lab/README.md](chatbot/es
 
 Needs `--ai`.
 
-**Object detection:** loads a YOLO11 nano model, exports it to NCNN (the fastest format on
+**Object detection:** loads a YOLO26 nano model, exports it to NCNN (the fastest format on
 the Pi), detects objects in a sample image and saves `detection_result.jpg`.
 
 ```bash
